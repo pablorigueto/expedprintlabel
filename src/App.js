@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import QRCode from 'qrcode.react';
 import styles from './styles/print.css'
-import { MdSettings, MdPrint, MdCloudDownload } from 'react-icons/md';
+import { MdPrint } from 'react-icons/md';
 
 function App() {
-  // const [data, setData] = useState('');
   const [pedido, setPedido] = useState('');
   const [cliente, setCliente] = useState('');
   const [loja, setLoja] = useState('');
@@ -15,12 +14,6 @@ function App() {
     const newVolume = event.target.value;
     setVolume(newVolume);
   };
-
-  // const handleDataAtual = () => {
-  //   const currentDate = new Date();
-  //   const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
-  //   setData(formattedDate);
-  // };
 
   const generateQRCodeData = (itemVolume) => {
     return `${pedido}, ${cliente}, ${transportadora}, ${loja}, ${itemVolume}`;
@@ -35,7 +28,6 @@ function App() {
         qrCodes.push(
           <div className={itemClass} key={i}>
             <div>
-              {/* <div className="field"><label>Data:</label><span> {data}</span></div> */}
               <div className="field"><label>Pedido:</label><span className="pedidoNro"> {pedido}</span></div>
               <div className="field"><label>Cliente:</label><span> {cliente}</span></div>
               <div className="field"><label>Loja:</label><span> {loja}</span></div>
@@ -58,7 +50,6 @@ function App() {
   };
 
   const resetForm = () => {
-    // setData('');
     setPedido('');
     setCliente('');
     setLoja('');
@@ -80,18 +71,9 @@ function App() {
           <h2 className="titleH2">ETIQUETA DE ESTOQUE - EXPEDIÇÃO</h2>
         </div>
 
-        {/* <button className="printSize"
-          onClick={handlePrintSizeChange}>
-          <MdSettings />
-        </button> */}
       </div>
 
       <div className='iniFields'>
-        {/* <div className='grid currentDate'>
-          <label>Data:</label>
-          <button className="btnCurrentDate" onClick={handleDataAtual}>Data Atual</button>
-          <input type="text" value={data} onChange={(e) => setData(e.target.value)} />
-        </div> */}
 
         <div className='grid'>
           <label>Pedido:</label>
@@ -118,7 +100,6 @@ function App() {
           <input type="number" value={volume} onChange={handleChangeVolume} />
         </div>
       </div>
-
 
     </div>
 
