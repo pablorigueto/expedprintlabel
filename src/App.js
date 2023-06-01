@@ -1,159 +1,132 @@
-import React, { useState, useEffect } from "react";
-import QRCode from "qrcode.react";
-import EtiquetaForm from "./Form/EtiquetaForm";
-import { MdSettings, MdPrint } from 'react-icons/md';
+import React, { useState } from 'react';
+import QRCode from 'qrcode.react';
+import styles from './styles/print.css'
+import { MdSettings, MdPrint, MdCloudDownload } from 'react-icons/md';
 
 function App() {
-  const [dataOperacao, setDataOperacao] = useState("");
-  const [pedido, setPedido] = useState("");
-  const [cliente, setCliente] = useState("");
-  const [loja, setLoja] = useState("");
-  const [volume, setVolume] = useState([]);
+  // const [data, setData] = useState('');
+  const [pedido, setPedido] = useState('');
+  const [cliente, setCliente] = useState('');
+  const [loja, setLoja] = useState('');
+  const [transportadora, setTransportadora] = useState('');
+  const [volume, setVolume] = useState('');
 
-  const [qrCodeValue, setQRCodeValue] = useState("");
-  const [shouldPrint, setShouldPrint] = useState(false);
-  const [printSize, setPrintSize] = useState("10cm 5cm");
-  const [duplicateCount, setDuplicateCount] = useState(1);
-
-  const generateQRCodeData = () => {
-    const texto_livre = `${dataOperacao}\t  ${pedido}\t ${cliente}\t  ${loja}\t  ${volume}`;
-    return texto_livre;
+  const handleChangeVolume = (event) => {
+    const newVolume = event.target.value;
+    setVolume(newVolume);
   };
 
-  useEffect(() => {
-    if (qrCodeValue !== '' && shouldPrint) {
-      window.print();
-      setShouldPrint(false);
-    }
-  }, [qrCodeValue, shouldPrint]);
+  // const handleDataAtual = () => {
+  //   const currentDate = new Date();
+  //   const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
+  //   setData(formattedDate);
+  // };
 
-  const updateQrCode = (event) => {
-    event.preventDefault();
-    const qrCodeData = generateQRCodeData();
-    setQRCodeValue(qrCodeData);
+  const generateQRCodeData = (itemVolume) => {
+    return `${pedido}, ${cliente}, ${transportadora}, ${loja}, ${itemVolume}`;
   };
 
-  const updateDuplicateCount = () => {
-    setDuplicateCount(volume.length > 0 ? volume.length : 1);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-  
-    const modifiedVolumeValues = Array.from({ length: volume }, (_, index) => {
-      const fraction = `${index + 1}/${volume}`;
-      return fraction;
-    });
-  
-    setVolume(modifiedVolumeValues);
-  
-    // Call updateDuplicateCount here to update duplicateCount before submit
-    updateDuplicateCount();
-  
-    setShouldPrint(true);
-  
-    // Delay the execution of updateQrCode using setTimeout
-    setTimeout(() => {
-      updateQrCode(event);
-      
-      // Delay resetting duplicateCount using setTimeout
-      setTimeout(() => {
-        window.location.reload();
-      }, 50);
-    }, 0);
-  };
-  
-  
-
-  useEffect(() => {
-    updateDuplicateCount();
-  }, [volume]);
-
-  useEffect(() => {
-    const printStyles = `
-      @media print {
-        @page {
-          size: ${printSize};
-          margin: 0;
-          padding: 0;
-        }
+  const renderItemsToPrint = () => {
+    if (volume) {
+      const qrCodes = [];
+      for (let i = 1; i <= volume; i++) {
+        const itemVolume = `${i}/${volume}`;
+        const itemClass = `cloned-item item-${i}`;
+        qrCodes.push(
+          <div className={itemClass} key={i}>
+            <div>
+              {/* <div className="field"><label>Data:</label><span> {data}</span></div> */}
+              <div className="field"><label>Pedido:</label><span className="pedidoNro"> {pedido}</span></div>
+              <div className="field"><label>Cliente:</label><span> {cliente}</span></div>
+              <div className="field"><label>Loja:</label><span> {loja}</span></div>
+              <div className="field"><label>Transp.:</label><span> {transportadora}</span></div>
+              <div className="field"><label>Volume:</label><span> {itemVolume}</span></div>
+            </div>
+            <div className="qrcode">
+              <QRCode value={generateQRCodeData(itemVolume)} />
+            </div>
+          </div>
+        );
       }
-    `;
+      return qrCodes;
+    }
+  };
 
-    // Add the printStyles to the <style> tag
-    const styleElement = document.createElement("style");
-    styleElement.innerHTML = printStyles;
-    document.head.appendChild(styleElement);
-  }, [printSize]);
+  const handlePrint = () => {
+    window.print();
+    resetForm();
+  };
 
-
-  const handlePrintSizeChange = () => {
-    const newSize = prompt("Enter the desired print size (e.g., 10cm 5cm)");
-    setPrintSize(newSize);
+  const resetForm = () => {
+    // setData('');
+    setPedido('');
+    setCliente('');
+    setLoja('');
+    setTransportadora('');
+    setVolume('');
   };
 
   return (
     <>
-      <div>
-        {Array.from({ length: duplicateCount }, (_, index) => (
-          <React.Fragment key={index}>
-            <div className="main__content">
-              <div className="printSizeParent">
-                {/* Logotipo */}
-                <button className="logotipo"></button>
+    <div className='main_structure'>
 
-                {/* Title field */}
-                <div className="title printTitle">
-                  <h2 className="title__h2">ETIQUETA DE ESTOQUE</h2>
-                </div>
+      <div className='topHead'>
+        {/* Logotipo */}
+        <button className="logotipo">
+        </button>
 
-                {/* Change print size button */}
-                <button className="printSize" onClick={handlePrintSizeChange}>
-                  <MdSettings />
-                </button>
-              </div>
+        {/* Title field */}
+        <div className="title">
+          <h2 className="titleH2">ETIQUETA DE ESTOQUE - EXPEDIÇÃO</h2>
+        </div>
 
-              <div className="parent">
-                {/* Form fields */}
-                <div className="fields">
-                  <EtiquetaForm
-                    handleSubmit={handleSubmit}
-                    dataOperacao={dataOperacao}
-                    setDataOperacao={setDataOperacao}
-                    pedido={pedido}
-                    setPedido={setPedido}
-                    cliente={cliente}
-                    setCliente={setCliente}
-                    loja={loja}
-                    setLoja={setLoja}
-                    volume={volume.length > 0 ? volume[index] : ""}
-                    setVolume={setVolume}
-                  />
-                </div>
-
-                {/* QR Code Field */}
-                <div className="qrcode__field">
-                  <QRCode key={qrCodeValue} value={qrCodeValue} className="qrcode" />
-                </div>
-              </div>
-
-            </div>
-
-            {index === 0 && (
-              <div className="buttons">
-                {/* Print button */}
-                <div className="printParent">
-                  <div className="printButton">
-                    <button className="print__btn" onClick={handleSubmit}>
-                      <MdPrint /> Print
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </React.Fragment>
-        ))}
+        {/* <button className="printSize"
+          onClick={handlePrintSizeChange}>
+          <MdSettings />
+        </button> */}
       </div>
+
+      <div className='iniFields'>
+        {/* <div className='grid currentDate'>
+          <label>Data:</label>
+          <button className="btnCurrentDate" onClick={handleDataAtual}>Data Atual</button>
+          <input type="text" value={data} onChange={(e) => setData(e.target.value)} />
+        </div> */}
+
+        <div className='grid'>
+          <label>Pedido:</label>
+          <input type="text" value={pedido} onChange={(e) => setPedido(e.target.value)} />
+        </div>
+
+        <div className='grid'>
+          <label>Cliente:</label>
+          <input type="text" value={cliente} onChange={(e) => setCliente(e.target.value.slice(0, 54))} maxLength={54} />
+        </div>
+
+        <div className='grid'>
+          <label>Loja:</label>
+          <input type="text" value={loja} onChange={(e) => setLoja(e.target.value)} />
+        </div>
+
+        <div className='grid'>
+          <label>Transportadora:</label>
+          <input type="text" value={transportadora} onChange={(e) => setTransportadora(e.target.value.slice(0, 20))} maxLength={20} />
+        </div>
+
+        <div className='grid'>
+          <label>Volume:</label>
+          <input type="number" value={volume} onChange={handleChangeVolume} />
+        </div>
+      </div>
+
+
+    </div>
+
+    <div className='parentPrintBtn'>
+      <button className='printBtn' onClick={handlePrint}><MdPrint /> Imprimir</button>
+    </div>  
+
+    <div className='renderItemsToPrint'>{renderItemsToPrint()}</div>
     </>
   );
 }

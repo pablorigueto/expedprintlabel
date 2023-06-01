@@ -89,6 +89,20 @@ function EtiquetaForm({
         </div>
 
         <div className="form__field">
+          <label htmlFor="volume">volume:</label>
+          <input
+            type="text"
+            id="volume"
+            name="volume"
+            required
+            value={volume}
+            onChange={(e) => setVolume(e.target.value)}
+            //onChange={(e) => setVolume(parseInt(e.target.value, 10))}
+            className="input__user input__field"
+          />
+        </div>
+
+        {/* <div className="form__field">
           <label htmlFor="volume">Volume:</label>
           <select
             id="volume"
@@ -104,7 +118,7 @@ function EtiquetaForm({
               </option>
             ))}
           </select>
-        </div>
+        </div> */}
 
       </form>
     </div>
