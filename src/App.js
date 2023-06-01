@@ -55,8 +55,15 @@ function App() {
     // Delay the execution of updateQrCode using setTimeout
     setTimeout(() => {
       updateQrCode(event);
+      
+      // Delay resetting duplicateCount using setTimeout
+      setTimeout(() => {
+        window.location.reload();
+      }, 50);
     }, 0);
   };
+  
+  
 
   useEffect(() => {
     updateDuplicateCount();
