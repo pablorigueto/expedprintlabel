@@ -109,7 +109,7 @@ body {
 
 .field {
   display: grid;
-  grid-template-columns: 88px 196px;
+  grid-template-columns: 88px 230px;
   font-size: 21px;
 }
 
@@ -119,8 +119,8 @@ label {
 }
 
 .qrcode canvas {
-  width: 80px !important;
-  height: 80px !important;
+  width: 50px !important;
+  height: 50px !important;
 }
 
 @media print {

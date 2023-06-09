@@ -1,0 +1,17 @@
+{
+    "name": "print/bkd",
+    "autoload": {
+        "psr-4": {
+            "Print\\Bkd\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "rigueto",
+            "email": "pabloedurigueto@outlook.com"
+        }
+    ],
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.28"
+    }
+}
